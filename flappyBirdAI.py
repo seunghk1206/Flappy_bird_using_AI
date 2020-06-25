@@ -1,9 +1,10 @@
 import pygame
-import neat
+import neat # neuro evolution augmented topology
 import time
 import os
 import random
 
+pygame.font.init()
 #UPPERCASE = 절대 바꾸지 않기
 WIN_WIDTH = 570
 WIN_HEIGHT = 800
@@ -12,6 +13,8 @@ BIRD_IMGS = [pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bi
 PIPE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "pipe.png")))
 BASE_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "base.png")))
 BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png")))
+
+STAT_FONT = pygame.font.SysFont("comicsans", 50)
 
 class Bird:
     IMGS = BIRD_IMGS
@@ -119,17 +122,48 @@ class Pipe():
         else:
             return False
 
-def draw_window(win, bird, pipes):
-    win.blit(BG_IMG, (0, 0))
+class Base:
+    VEL = 5
+    WIDTH = BASE_IMG.get_width()
+    IMG = BASE_IMG
+
+    def __init__(self, y):
+        self.y = y
+        self.x1 = 0
+        self.x2 = self.WIDTH
+
+    def move(self):
+        self.x1 -= self.VEL
+        self.x2 -= self.VEL
+        if self.x1 + self.WIDTH < 0:
+            self.x1 = self.x2 + self.WIDTH
+        if self.x2 + self.WIDTH < 0:
+            self.x2 = self.x1 + self.WIDTH
+    
+    def draw(self, win):
+        win.blit(self.IMG, (self.x1, self.y))
+        win.blit(self.IMG, (self.x2, self.y))
+
+def draw_window(win, bird, pipes, base, score):
+    win.blit(BG_IMG, (0,0))
+    
     for pipe in pipes:
         pipe.draw(win)
 
+    score_label = STAT_FONT.render("Score: " + str(score), 1, (255,255,255))
+    win.blit(score_label, (WIN_WIDTH - score_label.get_width() - 15, 10))
+
+    base.draw(win)
     bird.draw(win)
     pygame.display.update()
 
+
 def main():
+    base = Base(730)
     pipes = [Pipe(700)]
     win = pygame.display.set_mode((WIN_WIDTH, WIN_HEIGHT))
+
+    score = 0
     bird = Bird(200, 200)
     run = True
     clock = pygame.time.Clock()
@@ -142,7 +176,7 @@ def main():
         rem = []
         for pipe in pipes:
             if pipe.collide(bird):
-                pass
+                pass #꺼버려라
             if pipe.x + pipe.PIPE_TOP.get_width() < 0:
                 rem.append(pipe)
             if not pipe.passed and pipe.x < bird.x:
@@ -150,14 +184,33 @@ def main():
                 add_pipe = True
             pipe.move()
         if add_pipe:
+            score += 1
             pipes.append(Pipe(700))
         for r in rem:
             pipes.remove(r)
         if bird.y + bird.img.get_height() > 730:
             pass
-        #bird.move()
-        draw_window(win, bird, pipes)
+        # bird.move()
+        base.move()
+
+        draw_window(win, bird, pipes, base, score)
     pygame.quit()
     quit()
 
 main()
+
+def run():
+    config = neat.config.Config(neat.DefaultGenome, neat.DefaultSpeciesSet, neat.DefaultStagnation, config_path)
+
+    p = neat.Population(config)
+    #stat info
+    p.add_reporter(neat.StdOutReporter(True))
+    stats = neat.StatisticsReporter()
+    p.add_reporter(stats)
+
+    winner = p.run(main, 50)
+
+if __name__ == "__main__":
+    local_dir = os.path.dirname(__file__)
+    config_path = os.path.join(local_dir, "config_feedforward.txt")
+    run(config_path)
