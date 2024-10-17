@@ -16,13 +16,26 @@ BG_IMG = pygame.transform.scale2x(pygame.image.load(os.path.join("imgs", "bg.png
 
 STAT_FONT = pygame.font.SysFont("comicsans", 50)
 
+############################# Game Classes #############################
+
 class Bird:
+    """
+    Bird Class
+    Class for the Bird object (AKA player)
+    """
+    # Constants
     IMGS = BIRD_IMGS
     MAX_ROTATION = 25
     ROT_VEL = 20
     ANIMATION_TIME = 5
-
+    
     def __init__(self, x, y):
+        """
+        Bird Class Initializer
+        x: x coordinate of the Bird
+        y: y coordinate of the Bird
+        The initializer initializes the variables for calculation and the bird image.
+        """
         self.x = x
         self.y = y
         self.tilt = 0
@@ -31,13 +44,21 @@ class Bird:
         self.height = self.y
         self.img_count = 0
         self.img = self.IMGS[0][0]
-    
+        
     def jump(self):
+        """
+        jump function
+        The equivalent of "space bar" move of the game
+        """
         self.vel = -10.5
         self.tick_count = 0
         self.height = self.y
-    
+
     def move(self):
+        """
+        move function
+        When the bird moves (both x and y direction), this function calculates the change in velocity.
+        """
         self.tick_count += 1
         d = self.vel * self.tick_count + 1.5 * self.tick_count ** 2
         if d >= 16:
@@ -55,6 +76,11 @@ class Bird:
                 self.tilt -= self.ROT_VEL
     
     def draw(self, win):
+        """
+        draw function
+        win: the background window
+        This function draws the bird and changes the picture according to the tick count.
+        """
         self.img_count += 1
         if self.img_count < self.ANIMATION_TIME:
             self.img = self.IMGS[0][0]
@@ -77,6 +103,10 @@ class Bird:
         win.blit(rotated_image, new_rect.topleft)
 
     def get_mask(self):
+        """
+        get_mask function
+        gets the mask from the provided image after several calculation.
+        """
         return pygame.mask.from_surface(self.img)
     
 class Pipe:
