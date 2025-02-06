@@ -4,8 +4,9 @@ import time
 import os
 import random
 
+# loading textures and basic variables
 pygame.font.init()
-#UPPERCASE = 절대 바꾸지 않기
+# UPPERCASE = Never Change (Constant)
 WIN_WIDTH = 570
 WIN_HEIGHT = 800
 
@@ -114,11 +115,16 @@ class Pipe:
     VEL = 5
 
     def __init__(self, x):
+        """
+        Pipe Class Initializer
+        x: x coordinate of the pipe
+        The initializer initializes the variables for calculation and the pipe image.
+        """
         self.x = x
-        self.height = 0
-        self.gap = 100
-        self.top = 0 #where are the top and bottom of pipe img?
-        self.bottom = 0
+        self.height = 0 # height of pipes
+        self.gap = 100 # fixed gaps
+        self.top = 0 # where are the top and bottom of pipe img?
+        self.bottom = 0 # floor coordinates
 
         self.PIPE_TOP = pygame.transform.flip(PIPE_IMG, False, True) #flip the pipe (위에 있는거)
         self.PIPE_BOTTOM = PIPE_IMG
