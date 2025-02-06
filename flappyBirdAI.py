@@ -132,19 +132,37 @@ class Pipe:
         self.set_height() #define where top and bottom and how tall the pipe is
 
     def set_height(self):
+        """
+        set_height function
+        sets the height randomly with calculations of top and bottom of the pipes
+        """
         #give random number to the pipe height
         self.height = random.randrange(40,450)
         self.top = self.height - self.PIPE_TOP.get_height()
         self.bottom = self.height + self.GAP
     
     def move(self):
+        """
+        move function
+        moving the x value of the pipe (think of it in reverse. Pipe moves not the bird).
+        """
         self.x -= self.VEL 
     
     def draw(self, win):
+        """
+        draw function
+        win: window of the game
+        draws the pipes based on the piped top and bottom, and its height
+        """
         win.blit(self.PIPE_TOP, (self.x, self.top))
         win.blit(self.PIPE_BOTTOM, (self.x, self.bottom))
     
     def collide(self, bird):
+        """
+        collide function
+        bird: bird class object
+        instance when the bird crashes into the pipe.
+        """
         bird_mask = bird.get_mask()
         top_mask = pygame.mask.from_surface(self.PIPE_TOP)
         bottom_mask = pygame.mask.from_surface(self.PIPE_BOTTOM)
