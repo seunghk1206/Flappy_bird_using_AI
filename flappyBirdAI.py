@@ -184,11 +184,21 @@ class Base:
     IMG = BASE_IMG
 
     def __init__(self, y):
+        """
+        Base Class Initializer
+        y: y coordinate of the floor/base
+        Any modification of the ground will be done through this class, and the initializer sets the required coordinates
+        """
         self.y = y
         self.x1 = 0
         self.x2 = self.WIDTH
 
     def move(self):
+        """
+        Move function
+        Instead of thinking as the bird moving, we must think that everything else is moving.
+        The move function moves the base around.
+        """
         self.x1 -= self.VEL
         self.x2 -= self.VEL
         if self.x1 + self.WIDTH < 0:
@@ -197,6 +207,11 @@ class Base:
             self.x2 = self.x1 + self.WIDTH
     
     def draw(self, win):
+        """
+        Draw function
+        win: window
+        Draws the base on the window
+        """
         win.blit(self.IMG, (self.x1, self.y))
         win.blit(self.IMG, (self.x2, self.y))
 
